@@ -6,23 +6,8 @@ on:
       - main
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Install SSH key
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      - name: Clear known hosts file
-        run: |
-          rm -f $HOME/.ssh/known_hosts
-      - name: Verify EC2 host key
-        run: ssh-keyscan -H ${{ secrets.EC2_HOST }} >> $HOME/.ssh/known_hosts
-      - name: Set permissions on SSH private key
-        run: chmod 600 $HOME/.ssh/known_hosts
-      - name: Copy files to EC2 instance
-        run: scp -r ./metadata_ingestion ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/DataHubIngestionCICD
-      - name: Run DataHub ingest command for creating business glossary terms/term groups
-        run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/DataHubIngestionCICD/terms-ingesion/csx && datahub ingest -c recipe.yml"
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+      - uses: actions/checkout@v2
