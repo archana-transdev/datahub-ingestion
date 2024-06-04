@@ -1,0 +1,48 @@
+version: '1'
+source: DataHub
+owners:
+  users:
+    - eriksikkema
+    - gilbertvangriensven
+    - ellekevisser
+    - Ewald den Blaauwen
+url: "https://github.com/datahub-project/datahub/"
+nodes:
+  - name: cos_stf
+    description: Location table in Cosware.
+    knowledge_links:
+      - label: Wiki link for classification
+        url: "https://en.wikipedia.org/wiki/Transport_in_the_Netherlands"
+    custom_properties:
+      is_confidential: 'false'
+    terms:
+      - name: object_type
+        description: Object type, has influence on the value of concession_code_csx  in dev_datavault.datavault.sat_cos_vehicle_last_previous_placement.Available values- KFZ =Kraftfahrzeig (lorry), FAWEG=Fahrweg (road), SBFZ=Strassenbahnfahrzeug (train, tram), HAGEB=building.
+      - name: location_code
+        description: Location code, consisting of at least 4 capitals, the three first ones indicating the town and the last one being the first letter of the address.
+      - name: location_name
+        description: Name of the location, e.g. Delft; Schieweg.
+      - name: status_change_date
+        description: Date-time field.
+      - name: status_code
+        description: Blocking Code.U=Record is not visible.W=Warning for being used
+      - name: editing_user
+        description: Employee code of the person who has edited the record, e.g. ESIKKEMA
+      - name: z_coordinate
+        description: Z coordinate if applicable for floors.
+      - name: internal_external_code
+        description: Available values:E (external),I (internal)
+      - name: creation_date
+        description: New creation on.
+      - name: created_by
+        description: New creation by
+      - name: last_change_date
+        description: Last change on.
+      - name: last_changed_by
+        description: Last change by.
+      - name: internal_address_number
+        description: Internal  address number, contact person, foreign key to the WADR table.
+      - name: client_number
+        description: Client number, foreign key to the WKST table.
+      - name: maintenance_id
+        description: Foreign key to the WSAD table. Is empty.

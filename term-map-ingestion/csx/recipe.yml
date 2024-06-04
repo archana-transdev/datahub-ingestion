@@ -1,0 +1,5 @@
+source:
+  type: csv-enricher
+  config:
+    # Coordinates
+    filename: entity-terms-mapping.csv
