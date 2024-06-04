@@ -4,7 +4,6 @@ owners:
   users:
     - eriksikkema
     - gilbertvangriensven
-    - ellekevisser
 url: "https://github.com/datahub-project/datahub/"
 nodes:
   - name: csx_stops
