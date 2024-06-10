@@ -1,40 +1,30 @@
 name: Deploy to DataHub running on EC2
 
-
 on:
-  push:
-    branches:
-      - main
-
+  # Trigger the workflow on push or pull request events
+  push:
+    branches: [ main ]
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
 
-
-      - name: Install SSH key
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-
-      - name: Clear known hosts file
-        run: |
-          rm -f $HOME/.ssh/known_hosts
-
-
-      - name: Verify EC2 host key
-        run: ssh-keyscan -H ${{ secrets.EC2_HOST }} >> $HOME/.ssh/known_hosts
-
-
-      - name: Set permissions on SSH private key
-        run: chmod 600 $HOME/.ssh/known_hosts
-      - name: Copy files to EC2 instance
-        run: scp -r ./metadata_ingestion ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/DataHubIngestionCICD
-
-
-      - name: Run DataHub ingest command for creating business glossary terms/term groups
-        run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/DataHubIngestionCICD/terms-ingesion/csx && datahub ingest -c recipe.yml"
+  copy-file:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-1
+        
+    - name: Copy File to EC2
+      env:
+        EC2_INSTANCE_ID: i-06926d2641d5b2adb
+        FILE_PATH: ./metadata_ingestion
+        DESTINATION_PATH: /home/ubuntu/DataHubIngestionCICD
+      run: |
+        aws ssm start-session --target $EC2_INSTANCE_ID --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["80"],"localPortNumber":["8080"]}' --region eu-west-1
+        aws ssm put-file --source $FILE_PATH --destination $DESTINATION_PATH --name <YOUR_YAML_FILE_NAME> --region eu-west-1
