@@ -20,16 +20,11 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: eu-west-1
         
-    - name: Install Session Manager Plugin
-      run: |
-        curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" -o "session-manager-plugin.deb"
-        sudo dpkg -i session-manager-plugin.deb
-        
     - name: Copy File to EC2
       env:
         EC2_INSTANCE_ID: i-06926d2641d5b2adb
-        FILE_PATH: ./metadata_ingestion
+        FILE_PATH: ./metadata_ingestion/term-ingesion/csx/transdev-businessglossary.yml
         DESTINATION_PATH: /home/ubuntu/DataHubIngestionCICD
-      run: |
-        aws ssm start-session --target $EC2_INSTANCE_ID --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters "portNumber=22,localPortNumber=2222"
-        scp -i ${{ secrets.SSH_KEY }} -o "ProxyCommand=aws ssm start-session --target $EC2_INSTANCE_ID --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters portNumber=22,localPortNumber=2222" $FILE_PATH ubuntu@localhost:$DESTINATION_PATH
+      run: |
+        aws ssm start-session --target $EC2_INSTANCE_ID --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["80"],"localPortNumber":["8080"]}' --region eu-west-1
+        aws ssm put-file --source $FILE_PATH --destination $DESTINATION_PATH --name transdev-businessglossary.yml --region eu-west-1
